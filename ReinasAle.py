@@ -35,65 +35,97 @@ tablero = [[0, 0, 0, 0, 0, 0, 0, 0],
            [0, 0, 0, 0, 0, 0, 0, 0],
            [0, 0, 0, 0, 0, 0, 0, 0]]
 
+#Función para visualizar el tablero
+def mostrarTablero(tablero):
+    for i in tablero:
+        print(i)
 
-def recibe_jaque(fila, columna):
-    jaque = jaque_fila(fila,columna)
-    if (jaque == 0):
-        jaque = jaque_columna(fila,columna)
-        if (jaque == 0):
-            jaque = jaque_diagonal(fila,columna)
-    print("Hay jaque: " + str(jaque))
-    return jaque
-    pass
-
-def jaque_fila(fila,columna):
+#Dada una casilla,revisa si hay un jaque en esa fila.
+def jaque_fila(fila,columna,tablero):
     jaque = 0
     for j in range(len(tablero[fila])):
-        if (j == columna):
-            pass
-        else:
+        if (j != columna):      #Para no revisar la casilla de mi reina
             if(tablero[fila][j] == 1):
                 jaque = 1
                 break
     return jaque
 
-def jaque_columna(fila,columna):
+#Dada una casilla,revisa si hay un jaque en esa columna.
+def jaque_columna(fila,columna,tablero):
     jaque = 0
     for i in range(len(tablero)):
-        if (i == fila):
-            pass
-        else:
+        if (i != fila):     #Para no revisar la casilla de mi reina
             if(tablero[i][columna] == 1):
                 jaque = 1
                 break
     return jaque
 
-def jaque_diagonal(fila,columna):
+#Me ubica el elemento inicial para empezar la revisión de la diagonal descendente que pasa por la casilla inicial.
+def casilla_inicial_diagonal_descendente(fila, columna):
+    if (fila > 0 and columna > 0):
+        return casilla_inicial_diagonal_descendente(fila-1, columna-1)
+    else:
+        return fila, columna
+    
+#Dada una casilla, revisa si hay un jaque en la diagonal descendente que pasa por la casilla.
+def jaque_diagonal_descendente(fila, columna, tablero):
     jaque = 0
-    menor = min(fila,columna)
-
-    fila_revision = fila - menor
-    columna_revision = columna - menor
-
+    #Establezco la casilla inicial para mi revision
+    fila_revision , columna_revision = casilla_inicial_diagonal_descendente(fila,columna)
+    #Hago la revisión
     while(fila_revision < len(tablero) and columna_revision < len(tablero)):
-        if (fila_revision == fila):
-            #En caso de estar revisando la casilla de mi reina, ingorarla
-            pass
-        elif(tablero[fila_revision][columna_revision] == 1):
-            jaque = 1
-            return jaque
+        if (fila_revision != fila):  #Para no revisar la casilla de mi reina
+            if(tablero[fila_revision][columna_revision] == 1):
+                jaque = 1
+                return jaque
         fila_revision += 1
         columna_revision += 1
     return jaque
 
+#Me ubica el elemento inicial para empezar la revisión de la diagonal ascendente que pasa por la casilla inicial.
+def casilla_inicial_diagonal_ascendente(fila, columna, tablero):
+    if (fila < len(tablero)-1 and columna > 0):
+        return casilla_inicial_diagonal_ascendente(fila+1, columna-1, tablero)
+    else:
+        return fila, columna
+    
+#Dada una casilla, revisa si hay un jaque en la diagonal descendente que pasa por la casilla.
+def jaque_diagonal_ascendente(fila,columna,tablero):
+    jaque = 0
+    #Establezco la casilla inicial para mi revisión
+    fila_revision , columna_revision = casilla_inicial_diagonal_ascendente(fila,columna, tablero)
+    #Hago la revisión
+    while(fila_revision >= 0 and columna_revision < len(tablero)):
+        if (fila_revision != fila):  #Para no revisar la casilla de mi reina
+            if(tablero[fila_revision][columna_revision] == 1):
+                jaque = 1
+                return jaque
+        fila_revision -= 1
+        columna_revision += 1
+    return jaque
+
+#Dada una casila, revisa si hay un jaque
+def recibe_jaque(fila, columna, tablero):
+    jaque = 0
+    # Crear lista de funciones sin ejecutarlas, usando referencias
+    jaques = [
+            lambda: jaque_fila(fila,columna,tablero),
+            lambda: jaque_columna(fila,columna,tablero),
+            lambda: jaque_diagonal_descendente(fila,columna,tablero),
+            lambda: jaque_diagonal_ascendente(fila,columna,tablero)
+            ]
+    for function in jaques:
+        if (function() == 1):
+            jaque = 1
+            print("Hay jaque")
+            return jaque
+    return jaque
+
 def asignar_reina(fila, columna):
     tablero[fila][columna] = 1
-    pass
-
 
 def eliminar_reina(fila, columna):
     tablero[fila][columna] = 0
-
 
 def colocar_reina(columna):
     fila = 0
@@ -116,23 +148,19 @@ def colocar_reina(columna):
                     ++fila
     return posicion
 
-
 def main():
     jaque = 0
     while (jaque != 1):
         #Realizo el primer movimiento
-        movimiento = str(input("Ingrese (fila,columna):"))
+        movimiento = str(input("Ingrese el par ordenado de (fila, columna) para establecer la casilla inicial: "))
         #Proceso la entrada
         fila = int(movimiento.split(",")[0])
         columna = int(movimiento.split(",")[1])
         #Lo agrego en el tablero
         asignar_reina(fila,columna)
         #Muestro el tablero en pantalla
-        for i in range(len(tablero)):
-            print(tablero[i])
+        mostrarTablero(tablero)
         #Verifico  un jaque
-        jaque = recibe_jaque(fila,columna)
+        jaque = recibe_jaque(fila,columna,tablero)
 
-
-jaque_diagonal(4,5)
 main()
