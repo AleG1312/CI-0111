@@ -2,10 +2,6 @@
 Funcion que busca un elemento en la lista
 Debe terminar la implementación del algoritmo busqueda
 
-Se desarrolló el código tomando en cuenta las siguientes indicaciones hechas en clase:
-    1. Puede modificar el código a conveniencia e incluso cambiarlo todo.
-    2. No hay solo una manera de resolver un problema.
-    3. No se evaluará el código por eficiencia o buenas prácticas, sino porque logra resolver el problema.
 '''
 def busqueda(lista, valor, por_pasos):
     if (por_pasos == True):

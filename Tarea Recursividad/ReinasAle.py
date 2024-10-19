@@ -1,5 +1,4 @@
 '''
-
 Consideraciones:
 - Meter la primera reina.
 - Meter la segunda en una casilla que no esté atacada por
@@ -24,16 +23,8 @@ deja de estarlo).
 - recibe_jaque(fila, columna) => Devuelve 1
 si la casilla (Fila, Columna) recibe jaque de alguna
 reina y 0 en caso contrario.
-'''
 
-tablero = [[0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0]]
+'''
 
 #Función para visualizar el tablero
 def mostrarTablero(tablero):
@@ -117,17 +108,16 @@ def recibe_jaque(fila, columna, tablero):
     for function in jaques:
         if (function() == 1):
             jaque = 1
-            print("Hay jaque")
             return jaque
     return jaque
 
-def asignar_reina(fila, columna):
+def asignar_reina(fila, columna, tablero):
     tablero[fila][columna] = 1
 
-def eliminar_reina(fila, columna):
+def eliminar_reina(fila, columna, tablero):
     tablero[fila][columna] = 0
 
-def colocar_reina(columna):
+def colocar_reina(columna,tablero):
     fila = 0
     posicion = 0
 
@@ -135,20 +125,26 @@ def colocar_reina(columna):
         posicion = 1
         return posicion
     else:
-        posicion = 0
-        fila = 1
-        while not posicion and (fila <= 7):
-            if recibe_jaque(fila, columna):
-                ++fila
+        while (fila <= 7):
+            if recibe_jaque(fila, columna, tablero):
+                fila += 1
             else:
-                asignar_reina(fila, columna)
-                posicion = colocar_reina(columna + 1)
+                asignar_reina(fila, columna, tablero)
+                posicion = colocar_reina(columna + 1, tablero)
                 if not posicion:
-                    eliminar_reina(fila, columna)
-                    ++fila
+                    eliminar_reina(fila, columna, tablero)
+                fila += 1
     return posicion
 
-def main():
+def pruebas_metodos():
+    tablero =  [[0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0]]
     jaque = 0
     while (jaque != 1):
         #Realizo el primer movimiento
@@ -157,10 +153,22 @@ def main():
         fila = int(movimiento.split(",")[0])
         columna = int(movimiento.split(",")[1])
         #Lo agrego en el tablero
-        asignar_reina(fila,columna)
+        asignar_reina(fila,columna,tablero)
         #Muestro el tablero en pantalla
         mostrarTablero(tablero)
         #Verifico  un jaque
         jaque = recibe_jaque(fila,columna,tablero)
 
+def main():
+    tablero =  [[0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0]]
+    colocar_reina(0, tablero)
+    mostrarTablero(tablero)
+#pruebas_metodos()   
 main()
